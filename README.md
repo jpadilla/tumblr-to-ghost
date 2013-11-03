@@ -1,4 +1,6 @@
 # Tumblr to Ghost
+This tool takes advantage of the exact format of the exported GhostData.json via the Ugly Debug Tools. It maps your Tumblr blog posts data to this format, creating a file that you can import directly to Ghost. It also creates all your used tags from Tumblr so you can use them later in Ghost. Check out an [example](https://gist.github.com/jpadilla/7290464) export.
+
 
 ## Installation
 Installing on Heroku is the easiest option. Simply clone the repo, creat an app, and push.
