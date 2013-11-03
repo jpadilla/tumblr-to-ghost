@@ -39,7 +39,7 @@
         <div class="row top-buffer">
             <div class="col-xs-12">
                 <p class="lead">
-                    The team at <a href="http://ghost.org">Ghost</a>, the new and awesome blogging platform, have been working on specs to allow users to import and migrate from other platforms like Wordpress and Tumblr. For now you can use this tool to create a JSON file which you can import directly to Ghost with your Tumblr posts.
+                    While the team at <a href="http://ghost.org">Ghost</a> works to allow users to migrate from other platforms like Wordpress and Tumblr, you can use this tool to create a JSON file which you can import directly to Ghost with your all Tumblr posts.
                 </p>
             </div>
         </div>
@@ -60,12 +60,20 @@
                 </form>
             </div>
         </div>
-        <div class="row top-buffer">
+        <div class="row">
             <div class="col-xs-12">
                 <h2>How it works</h2>
                 <p>
-                    This tool takes advantage of the exact format of the exported GhostData.json via the Ugly Debug Tools, found in /ghost/debug/. It maps your Tumblr blog posts data to this format, creating a file that you can import directly to Ghost. It also creates all your used tags from Tumblr so you can use them later in Ghost. Check out an <a href="https://gist.github.com/jpadilla/7290464" target="_blank">example</a> export.
+                    This tool takes advantage of the exact format of the exported GhostData.json via the Ugly Debug Tools. It maps your Tumblr blog posts data to this format, creating a file that you can import directly to Ghost. It also creates all your used tags from Tumblr so you can use them later in Ghost. Check out an <a href="https://gist.github.com/jpadilla/7290464" target="_blank">example</a> export.
                 </p>
+
+                <ol>
+                    <li>Enter the domain you use to access your Tumblr blog</li>
+                    <li>Click on Export</li>
+                    <li>Wait for the export file to download</li>
+                    <li>Go to <em>/ghost/debug/</em> in your Ghost installation</li>
+                    <li>Import the downloaded file.</li>
+                </ol>
             </div>
         </div>
         <div class="row top-buffer">
