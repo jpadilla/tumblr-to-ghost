@@ -1,0 +1,109 @@
+<html>
+<head>
+    <title>Tumblr to Ghost</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        body {
+           font-family: "Helvetica Neue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+           font-weight: 300;
+        }
+
+        #application {
+            margin: 0 auto;
+            width: 600px;
+        }
+
+        .top-buffer {
+            margin-top:20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="application">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>
+                    <img class="center-block" src="/static/logo.png" alt="">
+                </h1>
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-xs-12">
+                <p class="lead">
+                    The team at <a href="http://ghost.org">Ghost</a>, the new and awesome blogging platform, have been working on specs to allow users to import and migrate from other platforms like Wordpress and Tumblr. For now you can use this tool to create a JSON file which you can import directly to Ghost with your Tumblr posts.
+                </p>
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-xs-12">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <form class="tumblr-to-ghost-form" action="/" method="POST">
+                   <div class="row">
+                       <div class="col-xs-9 input-wrapper {% if error %}has-error{% endif %}">
+                           <input type="text" class="form-control input-lg tumblr-url-input" name="tumblr_url" placeholder="Enter Tumblr blog URL" value="{{ tumblr_url }}">
+                       </div>
+                       <div class="col-xs-3">
+                           <button type="submit" class="btn btn-success btn-block btn-lg">Export</button>
+                       </div>
+                   </div>
+                </form>
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-xs-12">
+                <h2>How it works</h2>
+                <p>
+                    This tool takes advantage of the exact format of the exported GhostData.json via the Ugly Debug Tools, found in /ghost/debug/. It maps your Tumblr blog posts data to this format, creating a file that you can import directly to Ghost. It also creates all your used tags from Tumblr so you can use them later in Ghost. Check out an <a href="https://gist.github.com/jpadilla/7290464" target="_blank">example</a> export.
+                </p>
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-xs-12">
+                <p class="text-center">
+                    <small>Hacked together by <a href="http://jpadilla.com">José Padilla</a></small>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-37217294-3', 'tumblr-to-ghost.herokuapp.com');
+      ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        $(function() {
+            $('.tumblr-to-ghost-form').submit(function(event) {
+                $('.input-wrapper').removeClass('has-error');
+                $('.alert.alert-danger').remove();
+                $tumblrUrl = $('.tumblr-url-input').val();
+
+                ga('send', 'event', 'form', 'submit', $tumblrUrl);
+
+                return true;
+            });
+        });
+    </script>
+</body>
+</html>
