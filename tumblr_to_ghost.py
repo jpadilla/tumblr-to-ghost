@@ -58,19 +58,23 @@ class TumblrToGhost(object):
     def create_ghost_export(self, posts):
         ghost_posts = []
         tumblr_tags = []
+
         for post in posts:
             doc = pandoc.Document()
-            doc.html = post['body'].encode('ascii', 'ignore')
+
+            body = self.create_body(post)
+
+            doc.html = body.encode('ascii', 'ignore')
 
             tumblr_tags.extend(post['tags'])
 
             timestamp = post['timestamp'] * 1000
 
             ghost_posts.append({
-                "title": post['title'],
+                "title": self.create_title(post),
                 "slug": post['slug'],
                 "markdown": doc.markdown,
-                "html": post['body'],
+                "html": body,
                 "image": None,
                 "featured": 0,
                 "page": 0,
@@ -99,6 +103,36 @@ class TumblrToGhost(object):
         }
 
         return export_object
+
+    def create_title(self, post):
+        type = post['type']
+
+        if type =='photo':
+            title = post['caption']
+        else:
+            title = post['title']
+
+        return title
+
+    def create_body(self, post):
+        type = post['type']
+
+        if type == 'text':
+            body = post['body']
+        elif type == 'link':
+            description = post['description'].encode('ascii', 'ignore')
+            body = """
+            <strong><a href="{}">{}</a></strong>
+            <p>{}</p>
+            """.format(post['url'], post['title'], description)
+        elif type == 'photo':
+            body = '<p>{}</p>'.format(post['caption'])
+
+            for photo in post['photos']:
+                body += '<p>{}</p><img src="{}">'.format(
+                    photo['caption'], photo['original_size']['url'])
+
+        return body
 
     def create_tags(self, tumblr_tags):
         ghost_tags = []
