@@ -1,5 +1,6 @@
 import time
 import math
+import re
 
 import requests
 import pandoc
@@ -108,7 +109,11 @@ class TumblrToGhost(object):
         type = post['type']
 
         if type =='photo':
-            title = post['caption']
+            if post['caption']:
+                clean_tags = re.compile(r'<.*?>')
+                title = clean_tags.sub('', post['caption'])
+            else:
+                title = 'Image'
         else:
             title = post['title']
 
