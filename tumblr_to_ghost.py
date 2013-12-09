@@ -43,11 +43,12 @@ class TumblrToGhost(object):
         if post_count % limit != 0:
             steps = int(math.floor(steps) + 1)
 
-        url = '{}{}'.format(self.api_url, '&offset={offset}&limit={limit}')
-
         for step in range(0, steps):
-            url = url.format(url=self.tumblr_blog_url, resource='posts',
-                             offset=offset, limit=limit)
+            url_template = '{}{}'.format(self.api_url,
+                                         '&offset={offset}&limit={limit}')
+            url = url_template.format(url=self.tumblr_blog_url,
+                                      resource='posts',
+                                      offset=offset, limit=limit)
 
             r = requests.get(url)
             posts.extend(r.json()['response']['posts'])
