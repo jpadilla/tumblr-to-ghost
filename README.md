@@ -15,6 +15,6 @@ If you'd like to install locally, first ensure that Pandoc is installed and avai
 
 ```
 $ pip install -r requirements.txt
-DEBUG=True; TUMBLR_API_KEY="<API KEY HERE>"; python web.py
+DEBUG=True TUMBLR_API_KEY="<API KEY HERE>" python web.py
 ```
 
