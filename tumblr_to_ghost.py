@@ -46,10 +46,10 @@ class TumblrToGhost(object):
         url = '{}{}'.format(self.api_url, '&offset={offset}&limit={limit}')
 
         for step in range(0, steps):
-            url = url.format(url=self.tumblr_blog_url, resource='posts',
+            api_url = url.format(url=self.tumblr_blog_url, resource='posts',
                              offset=offset, limit=limit)
 
-            r = requests.get(url)
+            r = requests.get(api_url)
             posts.extend(r.json()['response']['posts'])
 
             offset += limit
@@ -108,14 +108,21 @@ class TumblrToGhost(object):
     def create_title(self, post):
         type = post['type']
 
-        if type =='photo':
+        if type =='photo' or type == 'audio' or type == 'video':
             if post['caption']:
                 clean_tags = re.compile(r'<.*?>')
                 title = clean_tags.sub('', post['caption'])
             else:
-                title = 'Image'
+                title = type.title()
+        elif type == 'answer':
+            title = post['question']
+        elif type == 'quote':
+            title = post['text']
         else:
-            title = post['title']
+            try:
+                title = post['title']
+            except Exception, e:
+                title = 'No title'
 
         return title
 
@@ -123,19 +130,37 @@ class TumblrToGhost(object):
         type = post['type']
 
         if type == 'text':
-            body = post['body']
+            body = u'{}'.format(post['body'])
         elif type == 'link':
             description = post['description'].encode('ascii', 'ignore')
-            body = """
+            body = u"""
             <strong><a href="{}">{}</a></strong>
             <p>{}</p>
             """.format(post['url'], post['title'], description)
         elif type == 'photo':
-            body = '<p>{}</p>'.format(post['caption'])
+            try:
+                body = '<p>{}</p>'.format(post['caption'])
+            except Exception, e:
+                body = ''
 
             for photo in post['photos']:
                 body += '<p>{}</p><img src="{}">'.format(
                     photo['caption'], photo['original_size']['url'])
+        elif type == 'quote':
+            body = u'<blockquote><p>{}</p></blockquote>'.format(post['text'])
+        elif type == 'audio':
+            body = '<p>{}</p>'.format(post['embed'])
+        elif type == 'answer':
+            body = post['answer']
+        elif type == 'video':
+            max_width = 0
+            embed_code = ''
+            for player in post['player']:
+                if player['width'] > max_width:
+                    embed_code = player['embed_code']
+            body = '<p>{}</p>'.format(embed_code)
+        else:
+            body = ''
 
         return body
 
