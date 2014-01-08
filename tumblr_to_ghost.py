@@ -12,8 +12,10 @@ logger = logging.getLogger(__name__)
 
 API_URL = "http://api.tumblr.com/v2/blog/{url}/{resource}?api_key={api_key}"
 
+
 class TumblrInfoResponseError(Exception):
     pass
+
 
 class TumblrToGhost(object):
     def __init__(self, api_key, tumblr_blog_url):
@@ -57,8 +59,12 @@ class TumblrToGhost(object):
         url = '{}{}'.format(self.api_url, '&offset={offset}&limit={limit}')
 
         for step in range(0, steps):
-            api_url = url.format(url=self.tumblr_blog_url, resource='posts',
-                             offset=offset, limit=limit)
+            api_url = url.format(
+                url=self.tumblr_blog_url,
+                resource='posts',
+                offset=offset,
+                limit=limit
+            )
 
             logger.debug('Fetching posts from: {}'.format(api_url))
 
@@ -125,7 +131,7 @@ class TumblrToGhost(object):
 
         logger.debug('Getting title for post of {} type'.format(type))
 
-        if type =='photo' or type == 'audio' or type == 'video':
+        if type == 'photo' or type == 'audio' or type == 'video':
             if post['caption']:
                 clean_tags = re.compile(r'<.*?>')
                 title = clean_tags.sub('', post['caption'])
@@ -158,17 +164,17 @@ class TumblrToGhost(object):
             """.format(post['url'], post['title'], description)
         elif type == 'photo':
             try:
-                body = '<p>{}</p>'.format(post['caption'])
+                body = u'<p>{}</p>'.format(post['caption'])
             except KeyError:
-                body = ''
+                body = u''
 
             for photo in post['photos']:
-                body += '<p>{}</p><img src="{}">'.format(
+                body += u'<p>{}</p><img src="{}">'.format(
                     photo['caption'], photo['original_size']['url'])
         elif type == 'quote':
             body = u'<blockquote><p>{}</p></blockquote>'.format(post['text'])
         elif type == 'audio':
-            body = '<p>{}</p>'.format(post['embed'])
+            body = u'<p>{}</p>'.format(post['embed'])
         elif type == 'answer':
             body = post['answer']
         elif type == 'video':
@@ -177,9 +183,9 @@ class TumblrToGhost(object):
             for player in post['player']:
                 if player['width'] > max_width:
                     embed_code = player['embed_code']
-            body = '<p>{}</p>'.format(embed_code)
+            body = u'<p>{}</p>'.format(embed_code)
         else:
-            body = ''
+            body = u''
 
         return body
 
