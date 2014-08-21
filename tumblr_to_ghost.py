@@ -29,6 +29,9 @@ class TumblrToGhost(object):
             api_key=self.api_key
         )
 
+        # State
+        self.used_tags = []
+
     def get_blog_info(self):
         url = self.api_url.format(url=self.tumblr_blog_url, resource='info')
 
@@ -218,22 +221,25 @@ class TumblrToGhost(object):
         tag_id = 0
 
         for tag in tumblr_tags:
+            if tag not in self.used_tags:
+                now = int(time.time()) * 1000
+                tag_id += 1
 
-            now = int(time.time()) * 1000
-            tag_id += 1
-            ghost_tags.append({
-                'id': tag_id,
-                'name': tag.title(),
-                'slug': tag,
-                'description': None,
-                'parent_id': None,
-                'meta_title': None,
-                'meta_description': None,
-                'created_at': now,
-                'created_by': 1,
-                'updated_at': now,
-                'updated_by': 1
-            })
+                ghost_tags.append({
+                    'id': tag_id,
+                    'name': tag.title(),
+                    'slug': tag,
+                    'description': None,
+                    'parent_id': None,
+                    'meta_title': None,
+                    'meta_description': None,
+                    'created_at': now,
+                    'created_by': 1,
+                    'updated_at': now,
+                    'updated_by': 1
+                })
+
+                self.used_tags.append(tag)
 
         return ghost_tags
 
