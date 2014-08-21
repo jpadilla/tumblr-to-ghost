@@ -98,10 +98,18 @@ class TumblrToGhost(object):
 
             timestamp = post['timestamp'] * 1000
 
+            title = self.create_title(post)
+
+            if post['slug']:
+                slug = post['slug']
+            else:
+                slug = '{}-{}'.format(
+                    title.lower().split(' ').join('-'), post_id)
+
             ghost_posts.append({
                 'id': post_id,
-                'title': self.create_title(post),
-                'slug': post['slug'],
+                'title': title,
+                'slug': slug,
                 'markdown': doc.markdown,
                 'html': body,
                 'image': None,
@@ -155,6 +163,13 @@ class TumblrToGhost(object):
                 title = post['title']
             except KeyError:
                 title = 'No title'
+
+        # Truncate if necessary.
+        max_length = 150
+
+        if len(title) > max_length:
+            title = ' '.join(title[:max_length+1].split(' ')[0:-1])
+            return '{}...'.format(title)
 
         return title
 
