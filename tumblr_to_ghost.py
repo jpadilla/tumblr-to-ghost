@@ -10,7 +10,7 @@ import pandoc
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-API_URL = "http://api.tumblr.com/v2/blog/{url}/{resource}?api_key={api_key}"
+API_URL = 'http://api.tumblr.com/v2/blog/{url}/{resource}?api_key={api_key}'
 
 
 class TumblrInfoResponseError(Exception):
@@ -79,15 +79,14 @@ class TumblrToGhost(object):
         ghost_posts = []
         tumblr_tags = []
         ghost_tags = []
-        postId = 0
+        post_id = 0
         posts_tags = []
 
         logger.debug('Creating Ghost export for Tumblr posts')
 
         for post in posts:
-            postId += 1
+            post_id += 1
             doc = pandoc.Document()
-
 
             body = self.create_body(post)
 
@@ -100,37 +99,37 @@ class TumblrToGhost(object):
             timestamp = post['timestamp'] * 1000
 
             ghost_posts.append({
-                "id": postId,
-                "title": self.create_title(post),
-                "slug": post['slug'],
-                "markdown": doc.markdown,
-                "html": body,
-                "image": None,
-                "featured": 0,
-                "page": 0,
-                "status": "published",
-                "language": "en_US",
-                "meta_title": None,
-                "meta_description": None,
-                "author_id": 1,
-                "created_at": timestamp,
-                "created_by": 1,
-                "updated_at": timestamp,
-                "updated_by": 1,
-                "published_at": timestamp,
-                "published_by": 1
+                'id': post_id,
+                'title': self.create_title(post),
+                'slug': post['slug'],
+                'markdown': doc.markdown,
+                'html': body,
+                'image': None,
+                'featured': 0,
+                'page': 0,
+                'status': 'published',
+                'language': 'en_US',
+                'meta_title': None,
+                'meta_description': None,
+                'author_id': 1,
+                'created_at': timestamp,
+                'created_by': 1,
+                'updated_at': timestamp,
+                'updated_by': 1,
+                'published_at': timestamp,
+                'published_by': 1
             })
 
-        posts_tags = self.create_posttags(posts, ghost_tags)
+        posts_tags = self.create_post_tags(posts, ghost_tags)
         export_object = {
-            "meta": {
-                "exported_on": int(time.time()) * 1000,
-                "version": "000"
+            'meta': {
+                'exported_on': int(time.time()) * 1000,
+                'version': '000'
             },
-            "data": {
-                "posts": ghost_posts,
-                "tags": ghost_tags,
-                "posts_tags": posts_tags
+            'data': {
+                'posts': ghost_posts,
+                'tags': ghost_tags,
+                'posts_tags': posts_tags
             }
         }
 
@@ -201,42 +200,41 @@ class TumblrToGhost(object):
 
     def create_tags(self, tumblr_tags):
         ghost_tags =[]
-
-        tagid = 0
+        tag_id = 0
 
         for tag in tumblr_tags:
 
             now = int(time.time()) * 1000
-            tagid += 1
+            tag_id += 1
             ghost_tags.append({
-                "id": tagid,
-                "name": tag.title(),
-                "slug": tag,
-                "description": None,
-                "parent_id": None,
-                "meta_title": None,
-                "meta_description": None,
-                "created_at": now,
-                "created_by": 1,
-                "updated_at": now,
-                "updated_by": 1
+                'id': tag_id,
+                'name': tag.title(),
+                'slug': tag,
+                'description': None,
+                'parent_id': None,
+                'meta_title': None,
+                'meta_description': None,
+                'created_at': now,
+                'created_by': 1,
+                'updated_at': now,
+                'updated_by': 1
             })
 
         return ghost_tags
 
-    def create_posttags(self, posts, tags):
+    def create_post_tags(self, posts, tags):
         posts_tags = []
-        postId = 0
+        post_id = 0
 
         for post in posts:
-            postId += 1
-            for posttag in post['tags']:
-                for tag in tags:
-                    if posttag.lower() == tag['name'].lower():
+            post_id += 1
 
+            for post_tag in post['tags']:
+                for tag in tags:
+                    if post_tag.lower() == tag['name'].lower():
                         posts_tags.append({
-                            "post_id": postId,
-                            "tag_id": tag['id']
+                            'post_id': post_id,
+                            'tag_id': tag['id']
                         })
 
         return posts_tags
