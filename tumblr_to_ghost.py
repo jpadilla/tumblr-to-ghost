@@ -106,8 +106,8 @@ class TumblrToGhost(object):
             if post['slug']:
                 slug = post['slug']
             else:
-                slug = '{}-{}'.format(
-                    title.lower().split(' ').join('-'), post_id)
+                title_slug = title.lower().split(' ')
+                slug = '{}-{}'.format('-'.join(title_slug), post_id)
 
             ghost_posts.append({
                 'id': post_id,
@@ -148,6 +148,7 @@ class TumblrToGhost(object):
 
     def create_title(self, post):
         type = post['type']
+        title = type.title()
 
         logger.debug('Getting title for post of {} type'.format(type))
 
@@ -161,18 +162,15 @@ class TumblrToGhost(object):
             title = post['question']
         elif type == 'quote':
             title = post['text']
-        else:
-            try:
-                title = post['title']
-            except KeyError:
-                title = 'No title'
+        elif post.get('title'):
+            title = post.get('title')
 
         # Truncate if necessary.
         max_length = 150
 
         if len(title) > max_length:
             title = ' '.join(title[:max_length+1].split(' ')[0:-1])
-            return '{}...'.format(title)
+            return '{}...'.format(title.encode('ascii', 'ignore'))
 
         return title
 
