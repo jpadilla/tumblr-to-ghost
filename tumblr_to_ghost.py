@@ -166,7 +166,7 @@ class TumblrToGhost(object):
             title = post.get('title')
 
         # Truncate if necessary.
-        max_length = 150
+        max_length = 140
 
         if len(title) > max_length:
             title = ' '.join(title[:max_length+1].split(' ')[0:-1])
