@@ -5,6 +5,7 @@ import logging
 
 import requests
 import pandoc
+from unidecode import unidecode
 
 
 logging.basicConfig(level=logging.INFO)
@@ -93,7 +94,7 @@ class TumblrToGhost(object):
 
             body = self.create_body(post)
 
-            doc.html = body.encode('ascii', 'ignore')
+            doc.html = unidecode(body)
 
             tumblr_tags.extend(post['tags'])
 
@@ -168,9 +169,12 @@ class TumblrToGhost(object):
         # Truncate if necessary.
         max_length = 140
 
+        title = unidecode(title)
+
         if len(title) > max_length:
-            title = ' '.join(title[:max_length+1].split(' ')[0:-1])
-            return '{}...'.format(title.encode('ascii', 'ignore'))
+            title = '{}...'.format(
+                ' '.join(title[:max_length+1].split(' ')[0:-1])
+            )
 
         return title
 
@@ -182,7 +186,7 @@ class TumblrToGhost(object):
         if type == 'text':
             body = u'{}'.format(post['body'])
         elif type == 'link':
-            description = post['description'].encode('ascii', 'ignore')
+            description = unidecode(post['description'])
             body = u"""
             <strong><a href="{}">{}</a></strong>
             <p>{}</p>
