@@ -9,6 +9,7 @@ from tumblr_to_ghost import TumblrToGhost, TumblrInfoResponseError
 app = Flask(__name__)
 app.debug = True if os.environ.get('DEBUG', False) else False
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     context = {}
@@ -16,7 +17,10 @@ def index():
     if request.method == 'POST':
         tumblr_url = request.form['tumblr_url']
         api_key = os.environ.get('TUMBLR_API_KEY')
-        tumblr_to_ghost = TumblrToGhost(api_key=api_key, tumblr_blog_url=tumblr_url)
+        tumblr_to_ghost = TumblrToGhost(
+            api_key=api_key,
+            tumblr_blog_url=tumblr_url
+        )
 
         try:
             posts = tumblr_to_ghost.get_posts()
@@ -29,7 +33,7 @@ def index():
                     'Content-Disposition': content_disposition,
                 }
             )
-        except TumblrInfoResponseError, e:
+        except TumblrInfoResponseError as e:
             context.update({
                 'error': e,
                 'tumblr_url': tumblr_url
