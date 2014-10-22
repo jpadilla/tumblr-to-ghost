@@ -9,7 +9,7 @@ import pandoc
 from unidecode import unidecode
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 API_URL = 'http://api.tumblr.com/v2/blog/{url}/{resource}?api_key={api_key}'
@@ -42,6 +42,7 @@ class TumblrToGhost(object):
         logger.debug('Fetching blog info from: {}'.format(url))
 
         r = requests.get(url)
+        
         return r.json()
 
     def get_posts(self):
@@ -210,6 +211,8 @@ class TumblrToGhost(object):
                     photo['caption'], photo['original_size']['url'])
         elif type == 'quote':
             body = u'<blockquote><p>{}</p></blockquote>'.format(post['text'])
+            if 'source' in post:
+                body += post['source']
         elif type == 'audio':
             body = u'<p>{}</p>'.format(post['embed'])
         elif type == 'answer':
