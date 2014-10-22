@@ -208,6 +208,8 @@ class TumblrToGhost(object):
                     photo['caption'], photo['original_size']['url'])
         elif type == 'quote':
             body = u'<blockquote><p>{}</p></blockquote>'.format(post['text'])
+            if 'source' in post:
+                body += post['source']
         elif type == 'audio':
             body = u'<p>{}</p>'.format(post['embed'])
         elif type == 'answer':
