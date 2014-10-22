@@ -1,7 +1,6 @@
 import time
 import math
 import re
-import json
 import logging
 
 import requests
@@ -86,9 +85,7 @@ class TumblrToGhost(object):
     def create_ghost_export(self, posts):
         ghost_posts = []
         tumblr_tags = []
-        ghost_tags = []
         post_id = 0
-        posts_tags = []
 
         logger.debug('Creating Ghost export for Tumblr posts')
 
@@ -139,7 +136,7 @@ class TumblrToGhost(object):
             ghost_posts.append(temp_post)
 
             self.create_post_tags(temp_post, new_tags)
-        
+
         export_object = {
             'meta': {
                 'exported_on': int(time.time()) * 1000,
@@ -151,7 +148,7 @@ class TumblrToGhost(object):
                 'posts_tags': self.posts_tags
             }
         }
-        
+
         return export_object
 
     def create_title(self, post):
@@ -197,7 +194,8 @@ class TumblrToGhost(object):
             body = u'{}'.format(post['body'])
         elif type == 'link':
             description = unidecode(post['description'])
-            body = ''.join(['<strong><a href="{}">{}</a></strong>',
+            body = ''.join([
+                '<strong><a href="{}">{}</a></strong>',
                 '<p>{}</p>',
                 '']).format(post['url'], post['title'], description)
         elif type == 'photo':
@@ -238,7 +236,7 @@ class TumblrToGhost(object):
             if tag_slug not in self.used_tags:
                 now = int(time.time()) * 1000
                 tag_id += 1
-                
+
                 temp_tag = {
                     'id': tag_id,
                     'name': tag.title(),
@@ -259,7 +257,7 @@ class TumblrToGhost(object):
         return ghost_tags
 
     def create_post_tags(self, post, tags):
-        
+
         for tag in tags:
             self.posts_tags.append({
                 'post_id': post['id'],
