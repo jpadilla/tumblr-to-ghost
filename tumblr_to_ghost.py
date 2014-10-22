@@ -41,7 +41,6 @@ class TumblrToGhost(object):
         logger.debug('Fetching blog info from: {}'.format(url))
 
         r = requests.get(url)
-        
         return r.json()
 
     def get_posts(self):
