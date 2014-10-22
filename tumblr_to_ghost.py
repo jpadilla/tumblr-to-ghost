@@ -9,7 +9,7 @@ import pandoc
 from unidecode import unidecode
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 API_URL = 'http://api.tumblr.com/v2/blog/{url}/{resource}?api_key={api_key}'
