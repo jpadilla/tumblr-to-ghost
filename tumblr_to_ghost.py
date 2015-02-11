@@ -193,10 +193,14 @@ class TumblrToGhost(object):
             body = u'{}'.format(post['body'])
         elif type == 'link':
             description = unidecode(post['description'])
+            try:
+                title = u'{}'.format(post['title'])
+            except KeyError:
+                title = u''
             body = ''.join([
                 '<strong><a href="{}">{}</a></strong>',
                 '<p>{}</p>',
-                '']).format(post['url'], post['title'], description)
+                '']).format(post['url'], title.encode('utf8'), description.encode('utf8'))
         elif type == 'photo':
             try:
                 body = u'<p>{}</p>'.format(post['caption'])
