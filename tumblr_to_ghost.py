@@ -91,6 +91,7 @@ class TumblrToGhost(object):
         for post in posts:
             post_id += 1
             doc = pandoc.Document()
+            tumblr_tags = []
 
             body = self.create_body(post)
 
@@ -236,6 +237,11 @@ class TumblrToGhost(object):
 
         for tag in tumblr_tags:
             tag_slug = '-'.join(tag.lower().strip(',').split(' '))
+
+            # if tag is not already known, create it and add it to
+            # already known tags (used_tags),ghost_tags (self.ghost_tags
+            # and current posts tags (ghost_tags)
+            # else just add it to current posts tags (ghost_tags)
             if tag_slug not in self.used_tags:
                 now = int(time.time()) * 1000
                 tag_id += 1
@@ -256,6 +262,13 @@ class TumblrToGhost(object):
                 ghost_tags.append(temp_tag)
                 self.ghost_tags.append(temp_tag)
                 self.used_tags.append(tag_slug)
+            else:
+                # since we only have the slug of the already known tag
+                # we need to retrieve the whole information in order to
+                # add it to the current posts tags (ghost_tags)
+                for known_tag in self.ghost_tags:
+                    if known_tag['slug'] ==  tag_slug:
+                        ghost_tags.append(known_tag)
 
         return ghost_tags
 
