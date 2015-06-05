@@ -187,6 +187,7 @@ class TumblrToGhost(object):
 
     def create_body(self, post):
         type = post['type']
+        body = u''
 
         logger.debug('Getting body for post of {} type'.format(type))
 
@@ -198,10 +199,14 @@ class TumblrToGhost(object):
                 title = u'{}'.format(post['title'])
             except KeyError:
                 title = u''
-            body = ''.join([
+
+            url =  u'{}'.format(post['url'])
+
+            body = u''.join([
                 '<strong><a href="{}">{}</a></strong>',
                 '<p>{}</p>',
-                '']).format(post['url'], title.encode('utf8'), description.encode('utf8'))
+                '']).format(url, title, description)
+
         elif type == 'photo':
             try:
                 body = u'<p>{}</p>'.format(post['caption'])
