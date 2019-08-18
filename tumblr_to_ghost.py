@@ -91,12 +91,9 @@ class TumblrToGhost(object):
 
         for post in posts:
             post_id += 1
-            # doc = pandoc.Document()
             tumblr_tags = []
 
             body = self.create_body(post)
-
-            # doc.html = unidecode(body)
 
             tumblr_tags.extend(post['tags'])
 
