@@ -5,5 +5,4 @@ Unidecode==0.04.16
 Werkzeug==0.9.4
 gunicorn==18.0
 itsdangerous==0.23
--e git://github.com/kennethreitz/pyandoc.git@04cd95d3426c7665fc88a1774709e7b68fe226d7#egg=pyandoc-master
 requests==2.0.1
