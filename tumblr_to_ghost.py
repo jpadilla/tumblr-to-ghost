@@ -4,7 +4,7 @@ import re
 import logging
 
 import requests
-import pandoc
+import json
 from unidecode import unidecode
 
 
@@ -34,6 +34,7 @@ class TumblrToGhost(object):
         self.used_tags = []
         self.ghost_tags = []
         self.posts_tags = []
+        self.used_slugs = []
 
     def get_blog_info(self):
         url = self.api_url.format(url=self.tumblr_blog_url, resource='info')
@@ -90,12 +91,9 @@ class TumblrToGhost(object):
 
         for post in posts:
             post_id += 1
-            doc = pandoc.Document()
             tumblr_tags = []
 
             body = self.create_body(post)
-
-            doc.html = unidecode(body)
 
             tumblr_tags.extend(post['tags'])
 
@@ -105,16 +103,40 @@ class TumblrToGhost(object):
 
             title = self.create_title(post)
 
+            slug = ""
+
             if post['slug']:
                 slug = post['slug']
-            else:
-                title_slug = title.lower().split(' ')
+
+            if not slug or slug in self.used_slugs:
+                title_slug = re.sub('\s[^a-zA-Z0-9 ]+', '', title.lower()).split(' ')
                 slug = '{}-{}'.format('-'.join(title_slug), post_id)
+
+            self.used_slugs.append(slug)
+
+            mobiledoc = {
+                'version': '0.3.1',
+                'markups': [],
+                'atoms': [],
+                'cards': [
+                    [
+                        'html',
+                        {
+                            'cardName': 'html',
+                            'html': body
+                        }
+                    ]
+                ],
+                'sections': [[
+                    10, 0
+                ]]
+            }
 
             temp_post = {
                 'id': post_id,
                 'title': title,
                 'slug': slug,
+                'mobiledoc': json.dumps(mobiledoc),
                 'markdown': body,
                 'html': body,
                 'image': None,
@@ -138,15 +160,19 @@ class TumblrToGhost(object):
             self.create_post_tags(temp_post, new_tags)
 
         export_object = {
-            'meta': {
-                'exported_on': int(time.time()) * 1000,
-                'version': '000'
-            },
-            'data': {
-                'posts': ghost_posts,
-                'tags': self.ghost_tags,
-                'posts_tags': self.posts_tags
-            }
+            'db': [
+                {
+                    'meta': {
+                        'exported_on': int(time.time()) * 1000,
+                        'version': '2.28.0'
+                    },
+                    'data': {
+                        'posts': ghost_posts,
+                        'tags': self.ghost_tags,
+                        'posts_tags': self.posts_tags
+                    }
+                }
+            ]
         }
 
         return export_object
