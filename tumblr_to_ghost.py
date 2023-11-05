@@ -11,7 +11,7 @@ from unidecode import unidecode
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-API_URL = 'http://api.tumblr.com/v2/blog/{url}/{resource}?api_key={api_key}'
+API_URL = 'https://api.tumblr.com/v2/blog/{url}/{resource}?api_key={api_key}'
 
 
 class TumblrInfoResponseError(Exception):
